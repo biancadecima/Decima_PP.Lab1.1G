@@ -20,24 +20,26 @@ void hardcodeAerolineas(eAerolinea aerolineas[]){
 }
 
 void mostrarAerolinea(eAerolinea aerolinea){
-	printf("|| %d | %10s ||\n", aerolinea.id, aerolinea.descripcion);
+	printf("|| %d | %10s  ||\n", aerolinea.id, aerolinea.descripcion);
 }
 
 int mostrarAerolineas(eAerolinea aerolineas[], int tam){
 	int todoOk = 0;
 
 		if (aerolineas != NULL && tam > 0) {
-			printf("\n====================================================\n");
-			printf("|| ID | DESCRIPCION ||\n");
+			printf("\n========================\n");
+			printf("||  ID  | DESCRIPCION ||\n");
+			printf("========================\n");
 			for (int i = 0; i < tam; i++) {
 				mostrarAerolinea(aerolineas[i]);
 			}
+			printf("========================\n");
 			todoOk = 1;
 		}
 		return todoOk;
 }
 
-int cargarAerolineaDescripcion(eAerolinea aerolineas[], int tam, int idAerolinea, char descripcion[]) { ///Carga la descrpcion a la que pertenece el id en un string idConfederacion
+int cargarAerolineaDescripcion(eAerolinea aerolineas[], int tam, int idAerolinea, char descripcion[]) {
 	int todoOk = 0;
 
 	if (aerolineas != NULL && tam > 0 && descripcion != NULL) {
@@ -53,18 +55,3 @@ int cargarAerolineaDescripcion(eAerolinea aerolineas[], int tam, int idAerolinea
 	return todoOk;
 }
 
-
- int validarIdAerolinea(int id, eAerolinea aerolineas[], int tam){ // devuelve 1 en el caso de ser valido el id, 0 si no se lo encontro en el array
-	int valido = 0;
-
-	if(aerolineas != NULL && tam > 0){
-		for(int i=0; i<tam; i++){
-			if(aerolineas[i].id == id){
-				valido = 1;
-				break;
-			}
-		}
-	}
-
-	return valido;
-}

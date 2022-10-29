@@ -18,17 +18,20 @@ void hardcodeDestino(eDestino destinos[]){
 }
 
 void mostrarDestino(eDestino destino){
-	printf("|| %d | %10s |  %.2f  ||\n", destino.id, destino.descripcion, destino.precio);
+	printf("|| %d | %11s |  %.2f  ||\n", destino.id, destino.descripcion, destino.precio);
 }
 
 int mostrarDestinos(eDestino destinos[], int tam){
 	int todoOk = 0;
 
 		if (destinos != NULL && tam > 0) {
-			printf("|| ID | DESCRIPCION | PRECIO ||\n");
+			printf("\n=====================================\n");
+			printf("||  ID  | DESCRIPCION |    PRECIO    ||\n");
+			printf("=====================================\n");
 			for (int i = 0; i < tam; i++) {
 				mostrarDestino(destinos[i]);
 			}
+			printf("=====================================\n");
 			todoOk = 1;
 		}
 		return todoOk;
@@ -47,5 +50,21 @@ int cargarDestinosDescripcion(eDestino destinos[], int tam, int idDestino, char 
 		}
 	}
 
+	return todoOk;
+}
+
+
+int cargarDestinosPrecio(eDestino destinos[], int tam, int idDestino, float* precio) {
+	int todoOk = 0;
+
+	if (destinos != NULL && tam > 0 && precio != NULL) {
+		for (int i = 0; i < tam; i++) {
+			if (destinos[i].id == idDestino) {
+				*precio = destinos[i].precio;
+				todoOk = 1;
+				break;
+			}
+		}
+	}
 	return todoOk;
 }

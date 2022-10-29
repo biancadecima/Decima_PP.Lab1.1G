@@ -13,7 +13,7 @@ void limpiarPantalla(){
 int menu()
 {
     int opcion;
-    printf("    *** ABM personas *** \n\n");
+    printf("    *** ABM AVION *** \n\n");
     printf("1- Alta avion\n");
     printf("2- Modificar avion\n");
     printf("3- Baja avion\n");
@@ -21,9 +21,11 @@ int menu()
     printf("5- Listar aerolineas\n");
     printf("6- Listar tipos\n");
     printf("7- Listar destinos\n");
-    printf("8- Listar vuelos\n");
-    printf("9- salir\n");
-    printf("Ingrese opcion: \n");
+    printf("8- Alta vuelo\n");
+    printf("9- Listar vuelos\n");
+    printf("10- Informes\n");
+    printf("11- salir\n");
+    printf("\nIngrese opcion: \n");
     scanf("%d", &opcion);
 
     return opcion;
@@ -44,6 +46,23 @@ char confirmarSalida() {
 	return salir;
 }
 
+int estadoArrayAviones(eAvion aviones[], int tam) {
+	int rtn = 0;
+	int contador = 0;
+
+	for (int i = 0; i < tam; i++) {
+		if (aviones[i].isEmpty == 0) {
+			contador++;
+			rtn = 1;
+		}
+	}
+	if (contador == tam) {
+		rtn = -1;
+	}
+
+	return rtn;
+}
+
 int inicializarAviones(eAvion aviones[], int tam)
 {
     int todoOk = 0;
@@ -60,7 +79,7 @@ int inicializarAviones(eAvion aviones[], int tam)
     return todoOk;
 }
 
-int buscarLibre(eAvion aviones[], int tam)
+int buscarLibreAvion(eAvion aviones[], int tam)
 {
     int indice = -1;
     for (int i = 0 ; i < tam; i++)
@@ -74,7 +93,7 @@ int buscarLibre(eAvion aviones[], int tam)
     return indice;
 }
 
-int altaAvion(eAvion aviones[], int tam, int* pId, eAerolinea aerolineas[], int tam_ae, eTipo tipos[], int tam_tp)//mostrar otra estructura harcodeada
+int altaAvion(eAvion aviones[], int tam, int* pId, eAerolinea aerolineas[], int tam_ae, eTipo tipos[], int tam_tp)
 {
     int todoOk = 0;
     int indice;
@@ -82,20 +101,20 @@ int altaAvion(eAvion aviones[], int tam, int* pId, eAerolinea aerolineas[], int 
 
     if(aviones != NULL && tam > 0)
     {
-        indice = buscarLibre(aviones, tam);
+        indice = buscarLibreAvion(aviones, tam);
         if (indice == -1)
         {
             printf("No hay lugar\n");
         }
         else
         {
-            printf("***** ALTA AVION ******\n");
+            printf("\n***** ALTA AVION ******\n");
 
             aux.id = *pId;
             (*pId)++;
 
             mostrarAerolineas(aerolineas, tam_ae);
-            printf("Ingrese ID de la aerolinea: \n");//// validar
+            printf("\nIngrese ID de la aerolinea: \n");
             scanf("%d", &aux.idAerolinea);
             while(!validarIdAerolinea(aux.idAerolinea, aerolineas, tam_ae)){
             	printf("\n Id aerolinea invalido. Reingrese ID de aerolinea: \n");
@@ -103,21 +122,24 @@ int altaAvion(eAvion aviones[], int tam, int* pId, eAerolinea aerolineas[], int 
             }
 
             mostrarTipos(tipos, tam_tp);
-            printf("Ingrese ID del tipo: \n");//// validar
+            printf("Ingrese ID del tipo: \n");
             scanf("%d", &aux.idTipo);
             while(!validarIdTipo(aux.idTipo, tipos, tam_tp)){
             	printf("\n Id tipo invalido. Reingrese ID del tipo: \n");
             	scanf("%d", &aux.idTipo);
             }
 
-            printf("Ingrese capacidad del vuelo: \n");//// validar
-            scanf("%d", &aux.capacidad);
+			printf("Ingrese capacidad del vuelo: \n");
+			scanf("%d", &aux.capacidad);
+			while (!validarCapacidad(aux.capacidad)) {
+				printf("\nCapacidad inválida. Reingrese capacidad del vuelo: \n");
+				scanf("%d", &aux.capacidad);
+			}
 
             aux.isEmpty = 0;
             aviones[indice] = aux;
             todoOk = 1;
         }
-
     }
 
     return todoOk;
@@ -131,10 +153,7 @@ void mostrarAvion(eAvion aviones, eAerolinea aerolineas[], int tam_ae, eTipo tip
    cargarAerolineaDescripcion(aerolineas, tam_ae, aviones.idAerolinea, descripcionAerolinea);
    cargarTiposDescripcion(tipos, tam_tp, aviones.idTipo, descripcionTipo);
 
-	printf("%04d    ", aviones.id);
-    printf("%8s  ", descripcionAerolinea);
-    printf("%s  ", descripcionTipo);
-    printf("  %2d    ", aviones.capacidad);
+	printf("| %6d| %12s|  %9s|  %6d|\n", aviones.id, descripcionAerolinea, descripcionTipo, aviones.capacidad);
 }
 
 int mostrarAviones(eAvion aviones[], int tam, eAerolinea aerolineas[], int tam_ae, eTipo tipos[], int tam_tp) {
@@ -142,13 +161,15 @@ int mostrarAviones(eAvion aviones[], int tam, eAerolinea aerolineas[], int tam_a
 	if (aviones != NULL && tam > 0) {
 		printf("***** LISTA DE AVIONES *****\n");
 		printf("****************************\n");
-		printf("ID    AEROLINEA   TIPO    CAPACIDAD \n");
-
+		printf("================================================\n");
+		printf("||  ID  ||  AEROLINEA ||   TIPO   || CAPACIDAD ||\n");
+		printf("================================================\n");
 		for (int i = 0; i < tam; i++) {
-			if (!aviones[i].isEmpty) {
+			if (aviones[i].isEmpty == 0) {
 				mostrarAvion(aviones[i], aerolineas, tam_ae, tipos, tam_tp);
 			}
 		}
+		printf("================================================\n");
 		todoOk = 1;
 	}
 
@@ -207,7 +228,6 @@ int modificarAvion(eAvion aviones[], int tam, eAerolinea aerolineas[], int tam_a
 	int indice;
 	int opcion;
 	char confirma;
-	///auxiliares para cargarlos desp a la lista
 	int aux;
 
 	if (aviones != NULL && tam > 0) {
@@ -226,8 +246,7 @@ int modificarAvion(eAvion aviones[], int tam, eAerolinea aerolineas[], int tam_a
 			scanf("%c", &confirma);
 			if (confirma == 's') {
 				printf("* MODIFICAR AVION * \n\n");
-				printf(
-						"1- Tipo\n2- Capacidad\nIngrese opcion:\n");
+				printf("1- Tipo\n2- Capacidad\nIngrese opcion:\n");
 				scanf("%d", &opcion);
 				switch (opcion) {
 				case 1:
@@ -256,7 +275,22 @@ int modificarAvion(eAvion aviones[], int tam, eAerolinea aerolineas[], int tam_a
 	return todoOk;
 }
 
-int ordenarAvionesDobleCriterio(eAvion aviones[], int tam){//ordenados por aerolínea y capacidad.
+int cargarAvionCapacidad(eAvion aviones[], int tam, int idAvion, int* capacidad) {
+	int todoOk = 0;
+
+	if (aviones != NULL && tam > 0 && capacidad != NULL) {
+		for (int i = 0; i < tam; i++) {
+			if (aviones[i].id == idAvion) {
+				*capacidad = aviones[i].capacidad;
+				todoOk = 1;
+				break;
+			}
+		}
+	}
+	return todoOk;
+}
+
+int ordenarAvionesDobleCriterio(eAvion aviones[], int tam){
 	int todoOk = 0;
 	eAvion aux;
 
